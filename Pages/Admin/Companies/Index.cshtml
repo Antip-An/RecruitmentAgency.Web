@@ -1,0 +1,105 @@
+@page
+@model RecruitmentAgency.Web.Pages.Admin.Companies.IndexModel
+@{
+    ViewData["Title"] = "Управление компаниями";
+}
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить эту компанию? Все связанные вакансии также будут удалены. Это действие нельзя отменить.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="post" asp-page-handler="Delete">
+                    <input type="hidden" name="id" id="companyIdToDelete" />
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>@ViewData["Title"]</h2>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="bi bi-plus"></i> Добавить компанию
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card admin-card">
+        <div class="card-body">
+            <div class="table-responsive-md">
+                <table class="table table-companies">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Контактный email</th>
+                            <th>Сайт</th>
+                            <th>Создал</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var company in Model.Companies)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(company.LogoUrl))
+                                    {
+                                        <img src="@company.LogoUrl" alt="Логотип" class="company-logo-sm" />
+                                    }
+                                    @company.Name
+                                </td>
+                                <td>@company.ContactEmail</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(company.Website))
+                                    {
+                                        <a href="@company.Website" target="_blank" class="company-website-link">
+                                            @company.Website
+                                        </a>
+                                    }
+                                </td>
+                                <td>@($"{company.CreatedBy?.FirstName} {company.CreatedBy?.LastName}")</td>
+                                <td>
+                                    <div class="btn-group action-buttons">
+                                        <a asp-page="Edit" asp-route-id="@company.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                onclick="confirmDelete(@company.Id)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(companyId) {
+            document.getElementById('companyIdToDelete').value = companyId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+}

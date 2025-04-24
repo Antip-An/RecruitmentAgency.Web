@@ -1,0 +1,56 @@
+@page
+@model RecruitmentAgency.Web.Pages.ManageRoleRequests.IndexModel
+@{
+    ViewData["Title"] = "Запросы на смену ролей";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (Model.PendingRequests.Any())
+    {
+        <div class="table-responsive mt-4">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Текущая роль</th>
+                        <th>Запрошенная роль</th>
+                        <th>Дата запроса</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model.PendingRequests)
+                    {
+                        <tr>
+                            <td>@request.User.FirstName @request.User.LastName<br><small>@request.User.Email</small></td>
+                            <td>
+                                @{
+                                    var currentRole = request.RequestedRole == "Employer" ? "Соискатель" : "Работодатель";
+                                }
+                                @currentRole
+                            </td>
+                            <td>@(request.RequestedRole == "Employer" ? "Работодатель" : "Соискатель")</td>
+                            <td>@request.RequestDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                <form method="post" asp-page-handler="Approve" asp-route-id="@request.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">Одобрить</button>
+                                </form>
+                                <form method="post" asp-page-handler="Reject" asp-route-id="@request.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Отклонить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mt-4">
+            Нет ожидающих запросов на смену роли.
+        </div>
+    }
+</div>

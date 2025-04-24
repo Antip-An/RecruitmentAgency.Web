@@ -1,0 +1,27 @@
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@inject UserManager<User> UserManager
+
+@if (User.Identity.IsAuthenticated)
+{
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="/Applications/Index">Отклики</a>
+        </li>
+    }
+    
+    @if (User.IsInRole("Employer"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="/Vacancies/Create">Добавить вакансию</a>
+        </li>
+    }
+    
+    @if (User.IsInRole("JobSeeker"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-page="/Profile/Edit">Мой профиль</a>
+        </li>
+    }
+}

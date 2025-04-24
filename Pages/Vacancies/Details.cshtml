@@ -1,0 +1,299 @@
+@page
+@model RecruitmentAgency.Web.Pages.Vacancies.DetailsModel
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@{
+    ViewData["Title"] = Model.Vacancy?.Title ?? "Детали вакансии";
+}
+
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить вакансию "@Model.Vacancy?.Title"? Это действие нельзя отменить.
+                @if (Model.Vacancy?.Applications?.Count > 0)
+                {
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-exclamation-triangle"></i> На эту вакансию уже есть @Model.Vacancy.Applications.Count откликов
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="post" asp-page-handler="Delete">
+                    <input type="hidden" name="id" value="@Model.Vacancy?.Id" />
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- Уведомления -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Основное содержимое -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <!-- Заголовок и статус -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="h2 mb-0">@Model.Vacancy?.Title</h1>
+                        <span class="badge bg-@(Model.Vacancy?.Status == "Active" ? "success" : "secondary") fs-6">
+                            @Model.Vacancy?.Status
+                        </span>
+                    </div>
+
+                    <!-- Информация о компании -->
+                    <div class="company-info mb-4">
+                        <a asp-page="/Companies/Details" asp-route-id="@Model.Vacancy?.CompanyId" class="text-decoration-none text-dark">
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(Model.Vacancy?.Company?.LogoUrl))
+                                {
+                                    <img src="@Model.Vacancy.Company.LogoUrl" alt="Логотип компании" 
+                                         class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                }
+                                <div>
+                                    <h3 class="h5 mb-0">
+                                        <i class="bi bi-building text-primary"></i> @Model.Vacancy?.Company?.Name
+                                    </h3>
+                                    <small class="text-muted">@Model.Vacancy?.Company?.Website</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Мета-информация -->
+                    <div class="vacancy-meta mb-4">
+                        <div class="d-flex flex-wrap gap-3">
+                            <span class="text-muted">
+                                <i class="bi bi-geo-alt-fill text-primary"></i> @Model.Vacancy?.Location
+                            </span>
+                            @if (Model.Vacancy?.IsRemote == true)
+                            {
+                                <span class="badge bg-info text-dark">
+                                    <i class="bi bi-laptop"></i> Удалённая работа
+                                </span>
+                            }
+                            <span class="text-muted">
+                                <i class="bi bi-calendar3 text-primary"></i> @Model.Vacancy?.PublishedAt?.ToString("dd.MM.yyyy")
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Зарплата -->
+                    @if (Model.Vacancy?.SalaryFrom.HasValue == true || Model.Vacancy?.SalaryTo.HasValue == true)
+                    {
+                        <div class="salary-info bg-light p-3 rounded mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-cash-stack fs-3 text-success me-3"></i>
+                                <div>
+                                    <h5 class="mb-0">
+                                        @(Model.Vacancy.SalaryFrom?.ToString("C0") ?? "от ...") - 
+                                        @(Model.Vacancy.SalaryTo?.ToString("C0") ?? "до ...")
+                                    </h5>
+                                    <small class="text-muted">Зарплата в месяц</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Описание -->
+                    <section class="mb-4">
+                        <h4 class="h5 border-bottom pb-2 mb-3">
+                            <i class="bi bi-file-text-fill text-primary"></i> Описание вакансии
+                        </h4>
+                        <div class="vacancy-description">
+                            @Html.Raw(Model.Vacancy?.Description?.Replace("\n", "<br>") ?? "Описание не указано")
+                        </div>
+                    </section>
+
+                    <!-- Требования -->
+                    <section class="mb-4">
+                        <h4 class="h5 border-bottom pb-2 mb-3">
+                            <i class="bi bi-list-check text-primary"></i> Требования
+                        </h4>
+                        <div class="vacancy-requirements">
+                            @Html.Raw(Model.Vacancy?.Requirements?.Replace("\n", "<br>") ?? "Требования не указаны")
+                        </div>
+                    </section>
+
+                    <!-- Навыки -->
+                    @if (Model.Vacancy?.VacancySkills?.Any() == true)
+                    {
+                        <section class="mb-4">
+                            <h4 class="h5 border-bottom pb-2 mb-3">
+                                <i class="bi bi-tools text-primary"></i> Ключевые навыки
+                            </h4>
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach (var skill in Model.Vacancy.VacancySkills)
+                                {
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary">
+                                        <i class="bi bi-check-circle-fill text-primary"></i> @skill.Skill.Name
+                                    </span>
+                                }
+                            </div>
+                        </section>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Боковая панель действий -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h4 class="h5 card-title mb-3">
+                        <i class="bi bi-lightning-charge-fill text-warning"></i> Действия
+                    </h4>
+
+                    <!-- Для соискателей -->
+                    @if (User.IsInRole("JobSeeker"))
+                    {
+                        if (Model.HasApplied)
+                        {
+                            <form method="post" asp-page-handler="Cancel" asp-route-id="@Model.Vacancy?.Id" class="mb-3">
+                                <button type="submit" class="btn btn-outline-danger w-100 mb-2">
+                                    <i class="bi bi-x-circle"></i> Отменить отклик
+                                </button>
+                            </form>
+                            <div class="alert alert-info p-2 mb-3 text-center">
+                                <small>
+                                    <i class="bi bi-info-circle"></i> Ваш статус: <strong>@Model.UserApplication?.Status</strong>
+                                </small>
+                            </div>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page-handler="Apply" asp-route-id="@Model.Vacancy?.Id" class="mb-3">
+                                <button type="submit" class="btn btn-primary w-100 mb-2">
+                                    <i class="bi bi-envelope-check"></i> Откликнуться
+                                </button>
+                            </form>
+                        }
+                    }
+
+                    <!-- Общие действия -->
+                    <a asp-page="/Companies/Details" asp-route-id="@Model.Vacancy?.CompanyId" 
+                       class="btn btn-outline-secondary w-100 mb-2">
+                        <i class="bi bi-building"></i> Все вакансии компании
+                    </a>
+
+                    <button class="btn btn-outline-dark w-100 mb-3" onclick="shareVacancy()">
+                        <i class="bi bi-share"></i> Поделиться
+                    </button>
+
+                    <!-- Для администраторов/менеджеров -->
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Employer"))
+                    {
+                        <hr class="my-3">
+                        <h5 class="h6 text-muted mb-3">Управление вакансией</h5>
+                        
+                        <a asp-page="Edit" asp-route-id="@Model.Vacancy?.Id" 
+                           class="btn btn-warning w-100 mb-2">
+                            <i class="bi bi-pencil-square"></i> Редактировать
+                        </a>
+                        
+                        <button type="button" class="btn btn-danger w-100" 
+                                data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash"></i> Удалить
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        .vacancy-description, .vacancy-requirements {
+            line-height: 1.8;
+        }
+        
+        .section-title {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .salary-info {
+            border-left: 4px solid #0d6efd;
+        }
+        
+        .sticky-top {
+            position: sticky;
+            z-index: 10;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function shareVacancy() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Вакансия: @Model.Vacancy?.Title',
+                    text: 'Посмотрите эту вакансию',
+                    url: window.location.href
+                }).catch(err => {
+                    console.error('Ошибка при использовании Share API:', err);
+                    copyToClipboard();
+                });
+            } else {
+                copyToClipboard();
+            }
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(window.location.href)
+                .then(() => {
+                    const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+                    toast.show();
+                })
+                .catch(err => {
+                    console.error('Ошибка при копировании:', err);
+                });
+        }
+    </script>
+}
+
+<!-- Toast для уведомления о копировании -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Успешно</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Ссылка скопирована в буфер обмена!
+        </div>
+    </div>
+</div>

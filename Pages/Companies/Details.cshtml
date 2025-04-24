@@ -1,0 +1,155 @@
+@page
+@model RecruitmentAgency.Web.Pages.Companies.DetailsModel
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@{
+    ViewData["Title"] = Model.Company.Name;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body text-center">
+
+                    @{
+                        var color = GetCompanyColor(Model.Company.Name);
+                        var textColor = GetContrastColor(color);
+                    }
+
+                    <div class="rounded mb-3 d-flex align-items-center justify-content-center"
+                        style="height: 200px; background-color: @color; color: @textColor">
+                        <span style="font-weight: bold; font-size: 3rem;">
+                            @GetCompanyInitials(Model.Company.Name)
+                        </span>
+                    </div>
+
+                    <h3>@Model.Company.Name</h3>
+
+                    @if (!string.IsNullOrEmpty(Model.Company.Website))
+                    {
+                        <a href="@Model.Company.Website" target="_blank" class="btn btn-outline-primary mt-2">
+                            <i class="bi bi-globe"></i> Сайт компании
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">О компании</h4>
+                    <p class="card-text">@Model.Company.Description</p>
+
+                    <div class="mt-4">
+                        <h5>Контакты</h5>
+                        <p><i class="bi bi-envelope"></i> @Model.Company.ContactEmail</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">Активные вакансии</h4>
+
+                    @if (Model.Company.Vacancies?.Any() == true)
+                    {
+                        <div class="list-group">
+                            @foreach (var vacancy in Model.Company.Vacancies.Where(v => v.Status == "Published"))
+                            {
+                                <a asp-page="/Vacancies/Details" asp-route-id="@vacancy.Id"
+                                    class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">@vacancy.Title</h5>
+                                        <small>@vacancy.PublishedAt?.ToString("d MMM")</small>
+                                    </div>
+                                    <p class="mb-1">@vacancy.Description.Truncate(100)</p>
+                                    <small class="text-muted">
+                                        @if (vacancy.SalaryFrom.HasValue || vacancy.SalaryTo.HasValue)
+                                        {
+                                            <span>
+                                                @(vacancy.SalaryFrom?.ToString("C0") ?? "от ...") -
+                                                @(vacancy.SalaryTo?.ToString("C0") ?? "до ...")
+                                            </span>
+                                        }
+                                    </small>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Нет активных вакансий
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    // Генерация цвета на основе названия компании
+    string GetCompanyColor(string companyName)
+    {
+        if (string.IsNullOrEmpty(companyName))
+            return "#6c757d"; // Серый цвет по умолчанию
+
+        var hash = companyName.GetHashCode();
+        var random = new Random(hash);
+
+        // Генерация приятных пастельных цветов
+        var r = random.Next(100, 200);
+        var g = random.Next(100, 200);
+        var b = random.Next(100, 200);
+
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
+    // Определение контрастного цвета текста
+    string GetContrastColor(string hexColor)
+    {
+        try
+        {
+            if (hexColor.StartsWith("#"))
+                hexColor = hexColor.Substring(1);
+
+            if (hexColor.Length != 6) return "#000000";
+
+            var r = Convert.ToInt32(hexColor.Substring(0, 2), 16);
+            var g = Convert.ToInt32(hexColor.Substring(2, 2), 16);
+            var b = Convert.ToInt32(hexColor.Substring(4, 2), 16);
+
+            // Формула восприятия яркости
+            var brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+            return brightness > 128 ? "#000000" : "#FFFFFF";
+        }
+        catch
+        {
+            return "#000000";
+        }
+    }
+
+    // Получение инициалов компании
+    string GetCompanyInitials(string companyName)
+    {
+        if (string.IsNullOrEmpty(companyName))
+            return "??";
+
+        var words = companyName.Split(new[] { ' ', '-', '.', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length == 0)
+            return "??";
+
+        if (words.Length == 1)
+            return words[0].Length > 1
+            ? words[0].Substring(0, 2).ToUpper()
+            : words[0].ToUpper() + "?";
+
+        // Берем первую букву первого и последнего слова
+        return $"{words[0][0]}{words[^1][0]}".ToUpper();
+    }
+}

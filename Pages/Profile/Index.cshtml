@@ -1,0 +1,125 @@
+@page
+@model RecruitmentAgency.Web.Pages.Profile.IndexModel
+@{
+    ViewData["Title"] = "Профиль";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="avatar-lg mb-3">
+                        <i class="bi bi-person-circle fs-1"></i>
+                    </div>
+                    <h3>@Model.CurrentUser.FirstName @Model.CurrentUser.LastName</h3>
+                    <span class="badge bg-primary">@Model.Role</span>
+                    
+                    <div class="mt-3">
+                        <a asp-page="Edit" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
+                    </div>
+
+                    <!-- Кнопки смены роли -->
+                    @if (!Model.HasPendingRequest)
+                    {
+                        <div class="mt-3">
+                            @if (Model.Role == "JobSeeker")
+                            {
+                                <form method="post" asp-page-handler="RequestRoleChange" asp-route-requestedRole="Employer">
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-briefcase"></i> Стать работодателем
+                                    </button>
+                                </form>
+                            }
+                            else if (Model.Role == "Employer")
+                            {
+                                <form method="post" asp-page-handler="RequestRoleChange" asp-route-requestedRole="JobSeeker">
+                                    <button type="submit" class="btn btn-info btn-sm">
+                                        <i class="bi bi-person"></i> Стать соискателем
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="bi bi-info-circle"></i> Ваш запрос на смену роли ожидает рассмотрения
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <!-- Навигация по профилю -->
+            <div class="card shadow-sm">
+                <div class="list-group list-group-flush">
+                    <a asp-page="Index" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-person me-2"></i>Профиль
+                    </a>
+                    <a asp-page="/Authorization/Manage/Index" class="list-group-item list-group-item-action">
+                        <i class="bi bi-gear me-2"></i>Настройки аккаунта
+                    </a>
+                    <form asp-page="/Authorization/Logout" method="post" class="list-group-item list-group-item-action">
+                        <button type="submit" class="btn btn-link p-0 text-start w-100">
+                            <i class="bi bi-box-arrow-right me-2"></i>Выйти
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Основная информация</h4>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Email</h5>
+                            <p>@Model.CurrentUser.Email</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Телефон</h5>
+                            <p>@(Model.CurrentUser.PhoneNumber ?? "Не указан")</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Дата регистрации</h5>
+                            <p>@Model.CurrentUser.RegistrationDate.ToShortDateString()</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Последний вход</h5>
+                            <p>@(Model.CurrentUser.LastLoginDate?.ToShortDateString() ?? "Еще не входил")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-lg {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+    }
+    
+    .list-group-item.active {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .list-group-item button {
+        text-decoration: none;
+    }
+</style>

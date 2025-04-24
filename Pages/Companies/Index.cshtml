@@ -1,0 +1,308 @@
+@* @page
+@model RecruitmentAgency.Web.Pages.Companies.IndexModel
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@{
+    ViewData["Title"] = "Компании";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Работодатели</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-page="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить компанию
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Поиск -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="search" 
+                           value="@Model.Search" placeholder="Название компании, описание">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Поиск
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список компаний -->
+    <div class="row">
+        @foreach (var company in Model.Companies)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm company-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+                            @if (!string.IsNullOrEmpty(company.LogoUrl))
+                            {
+                                <img src="@company.LogoUrl" class="rounded me-3" 
+                                     style="width: 80px; height: 80px; object-fit: contain" 
+                                     alt="Логотип компании">
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px;">
+                                    <i class="bi bi-building fs-3 text-muted"></i>
+                                </div>
+                            }
+                            
+                            <div>
+                                <h4 class="card-title mb-1">@company.Name</h4>
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-briefcase"></i> 
+                                    @company.Vacancies?.Count(v => v.Status == "Published") активных вакансий
+                                </p>
+                                <p class="card-text">@company.Description.Truncate(150)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            @if (!string.IsNullOrEmpty(company.Website))
+                            {
+                                <a href="@company.Website" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-globe"></i> Сайт
+                                </a>
+                            }
+                            
+                            <a asp-page="Details" asp-route-id="@company.Id" 
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Companies.Any())
+    {
+        <div class="alert alert-info">
+            Компании не найдены. Попробуйте изменить параметры поиска.
+        </div>
+    }
+
+    <!-- Пагинация -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" 
+                       asp-route-pageNumber="@i"
+                       asp-route-search="@Model.Search">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<style>
+    .company-card {
+        transition: transform 0.2s;
+    }
+    .company-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+</style> *@
+
+
+@page
+@model RecruitmentAgency.Web.Pages.Companies.IndexModel
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@using System.Drawing
+@{
+    ViewData["Title"] = "Компании";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Работодатели</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-page="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить компанию
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Поиск -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="search" 
+                           value="@Model.Search" placeholder="Название компании, описание">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Поиск
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список компаний -->
+    <div class="row">
+        @foreach (var company in Model.Companies)
+        {
+            var color = GetCompanyColor(company.Name);
+            var textColor = GetContrastColor(color);
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm company-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+
+                            <div class="rounded me-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px; background-color: @color; color: @textColor">
+                                    <span style="font-weight: bold; font-size: 1.2rem;">
+                                        @GetCompanyInitials(company.Name)
+                                    </span>
+                                </div>
+                            
+                            <div>
+                                <h4 class="card-title mb-1">@company.Name</h4>
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-briefcase"></i> 
+                                    @company.Vacancies?.Count(v => v.Status == "Published") активных вакансий
+                                </p>
+                                <p class="card-text">@company.Description.Truncate(150)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            @if (!string.IsNullOrEmpty(company.Website))
+                            {
+                                <a href="@company.Website" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-globe"></i> Сайт
+                                </a>
+                            }
+                            
+                            <a asp-page="Details" asp-route-id="@company.Id" 
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Companies.Any())
+    {
+        <div class="alert alert-info">
+            Компании не найдены. Попробуйте изменить параметры поиска.
+        </div>
+    }
+
+    <!-- Пагинация -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" 
+                       asp-route-pageNumber="@i"
+                       asp-route-search="@Model.Search">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<style>
+    .company-card {
+        transition: transform 0.2s;
+    }
+    .company-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+</style>
+
+@functions {
+    // Генерация цвета на основе названия компании
+    string GetCompanyColor(string companyName)
+    {
+        if (string.IsNullOrEmpty(companyName))
+            return "#6c757d"; // Серый цвет по умолчанию
+        
+        var hash = companyName.GetHashCode();
+        var random = new Random(hash);
+        
+        // Генерация приятных пастельных цветов
+        var r = random.Next(100, 200);
+        var g = random.Next(100, 200);
+        var b = random.Next(100, 200);
+        
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
+    // Определение контрастного цвета текста
+    string GetContrastColor(string hexColor)
+    {
+        try 
+        {
+            if (hexColor.StartsWith("#"))
+                hexColor = hexColor.Substring(1);
+            
+            if (hexColor.Length != 6) return "#000000";
+            
+            var r = Convert.ToInt32(hexColor.Substring(0, 2), 16);
+            var g = Convert.ToInt32(hexColor.Substring(2, 2), 16);
+            var b = Convert.ToInt32(hexColor.Substring(4, 2), 16);
+            
+            // Формула восприятия яркости
+            var brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            
+            return brightness > 128 ? "#000000" : "#FFFFFF";
+        }
+        catch
+        {
+            return "#000000";
+        }
+    }
+
+    // Получение инициалов компании
+    string GetCompanyInitials(string companyName)
+    {
+        if (string.IsNullOrEmpty(companyName))
+            return "??";
+            
+        var words = companyName.Split(new[] {' ', '-', '.', ','}, StringSplitOptions.RemoveEmptyEntries);
+        
+        if (words.Length == 0)
+            return "??";
+            
+        if (words.Length == 1)
+            return words[0].Length > 1 
+                ? words[0].Substring(0, 2).ToUpper() 
+                : words[0].ToUpper() + "?";
+                
+        // Берем первую букву первого и последнего слова
+        return $"{words[0][0]}{words[^1][0]}".ToUpper();
+    }
+}

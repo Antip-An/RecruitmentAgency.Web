@@ -1,0 +1,161 @@
+@page
+@model RecruitmentAgency.Web.Pages.Vacancies.IndexModel
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@{
+    ViewData["Title"] = "Вакансии";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Актуальные вакансии</h1>
+        </div>
+
+        <div class="col-md-4 text-end">
+        @if (User.IsInRole("Employer") || User.IsInRole("Manager") || User.IsInRole("Admin"))
+        {
+            var btnClass = "btn-primary";
+            var icon = "bi-plus-circle";
+
+            if (User.IsInRole("Manager"))
+            {
+                btnClass = "btn-warning";
+                icon = "bi-plus-circle-fill";
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                btnClass = "btn-danger";
+                icon = "bi-plus-square-fill";
+            }
+
+            <a asp-page="/Admin/Vacancies/Create" class="btn @btnClass">
+                <i class="bi @icon"></i> Добавить вакансию
+            </a>
+        }
+    </div>
+
+</div>
+
+<!-- Поиск и фильтры -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="search" value="@Model.Search"
+                    placeholder="Должность, ключевые слова">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="companyId">
+                    <option value="">Все компании</option>
+                    @foreach (var company in Model.Companies)
+                    {
+                        <option value="@company.Id" selected="@(company.Id == Model.CompanyId)">@company.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="remote">
+                    <option value="">Любой формат</option>
+                    <option value="true" selected="@Model.Remote">Удалённая работа</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Поиск
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Список вакансий -->
+<div class="row">
+    @foreach (var vacancy in Model.Vacancies)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm vacancy-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h4 class="card-title">@vacancy.Title</h4>
+                        <span class="badge bg-success">@vacancy.Status</span>
+                    </div>
+
+                    <div class="mb-2">
+                        <a asp-page="/Companies/Details" asp-route-id="@vacancy.CompanyId" class="text-decoration-none">
+                            <i class="bi bi-building"></i> @vacancy.Company.Name
+                        </a>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted"><i class="bi bi-geo-alt"></i> @vacancy.Location</span>
+                        @if (vacancy.IsRemote)
+                        {
+                            <span class="badge bg-info ms-2">Удалённо</span>
+                        }
+                    </div>
+
+                    <p class="card-text">@vacancy.Description.Truncate(150)</p>
+
+                    <div class="mb-3">
+                        @if (vacancy.SalaryFrom.HasValue || vacancy.SalaryTo.HasValue)
+                        {
+                            <span class="fw-bold text-primary">
+                                @(vacancy.SalaryFrom?.ToString("C0") ?? "от ...") -
+                                @(vacancy.SalaryTo?.ToString("C0") ?? "до ...")
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Зарплата не указана</span>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Опубликовано: @vacancy.PublishedAt?.ToString("d MMMM yyyy")</small>
+
+                        <div class="btn-group">
+                            <a asp-page="Details" asp-route-id="@vacancy.Id" class="btn btn-sm btn-outline-primary">
+                                Подробнее
+                            </a>
+
+                            @if (User.IsInRole("JobSeeker"))
+                            {
+                                <form method="post" asp-page-handler="Apply" asp-route-id="@vacancy.Id" class="ms-2">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        Откликнуться
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Пагинация -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-route-pageNumber="@i" asp-route-search="@Model.Search"
+                    asp-route-companyId="@Model.CompanyId" asp-route-remote="@Model.Remote">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+</div>
+
+<style>
+    .vacancy-card {
+        transition: transform 0.2s;
+    }
+
+    .vacancy-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>

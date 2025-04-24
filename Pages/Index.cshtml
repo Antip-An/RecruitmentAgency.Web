@@ -1,0 +1,180 @@
+﻿@page
+@model IndexModel
+@using Microsoft.AspNetCore.Identity
+@using RecruitmentAgency.Web.Models
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<div class="home-page">
+    <!-- Герой-баннер -->
+    <section class="hero-banner bg-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Найдите работу мечты с нами</h1>
+                    <p class="lead mb-4">Мы соединяем лучших специалистов с ведущими компаниями страны</p>
+                    <div class="d-flex gap-3">
+                        <a href="/Vacancies" class="btn btn-light btn-lg px-4">Найти вакансии</a>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Authorization/Register" class="btn btn-outline-light btn-lg px-4">Для работодателей</a>
+                        }
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <img src="/images/hero-image.jpg" alt="Рабочий процесс" class="img-fluid rounded-3 shadow">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- О компании -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">О нашем агентстве</h2>
+                <div class="divider mx-auto bg-primary"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box bg-primary bg-opacity-10 text-primary mx-auto mb-4">
+                                <i class="bi bi-people-fill fs-3"></i>
+                            </div>
+                            <h3>15+ лет опыта</h3>
+                            <p>Более 15 лет мы успешно помогаем компаниям находить лучших сотрудников</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box bg-primary bg-opacity-10 text-primary mx-auto mb-4">
+                                <i class="bi bi-building fs-3"></i>
+                            </div>
+                            <h3>500+ компаний</h3>
+                            <p>Мы сотрудничаем с ведущими работодателями в различных отраслях</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box bg-primary bg-opacity-10 text-primary mx-auto mb-4">
+                                <i class="bi bi-person-check fs-3"></i>
+                            </div>
+                            <h3>10,000+ трудоустройств</h3>
+                            <p>Помогли тысячам специалистов найти достойную работу</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Популярные вакансии -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Популярные вакансии</h2>
+                <div class="divider mx-auto bg-primary"></div>
+            </div>
+            <div class="row g-4">
+                @foreach (var vacancy in Model.FeaturedVacancies.Take(3))
+                {
+                    <div class="col-md-4">
+                        <div class="card h-100 vacancy-card">
+                            <div class="card-body">
+                                <span class="badge bg-success mb-2">@vacancy.Status</span>
+                                <h5 class="card-title">@vacancy.Title</h5>
+                                <p class="text-muted"><i class="bi bi-building"></i> @vacancy.Company.Name</p>
+                                <p class="text-muted"><i class="bi bi-geo-alt"></i> @vacancy.Location</p>
+                                <p class="card-text">@vacancy.Description.Truncate(100)</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-primary">
+                                        @(vacancy.SalaryFrom?.ToString("C0") ?? "По договорённости") -
+                                        @(vacancy.SalaryTo?.ToString("C0") ?? "По договорённости")
+                                    </span> <a href="/Vacancies/Details?id=@vacancy.Id"
+                                        class="btn btn-sm btn-outline-primary">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-4">
+                <a href="/Vacancies" class="btn btn-primary px-4">Все вакансии</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как это работает -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Как это работает</h2>
+                <div class="divider mx-auto bg-primary"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white mx-auto mb-3">1</div>
+                    <h4>Регистрация</h4>
+                    <p>Создайте аккаунт как соискатель или работодатель</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white mx-auto mb-3">2</div>
+                    <h4>Заполнение профиля</h4>
+                    <p>Расскажите о себе или о вашей компании</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white mx-auto mb-3">3</div>
+                    <h4>Поиск</h4>
+                    <p>Найдите подходящие вакансии или кандидатов</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="step-number bg-primary text-white mx-auto mb-3">4</div>
+                    <h4>Трудоустройство</h4>
+                    <p>Свяжитесь с подходящими кандидатами или работодателями</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Отзывы -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Отзывы наших клиентов</h2>
+                <div class="divider mx-auto bg-primary"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <img src="/images/avatar1.jpg" class="rounded-circle avatar" alt="Аватар">
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="mb-1">Иван Петров</h5>
+                                    <div class="text-warning">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">"Благодаря этому агентству нашел работу своей мечты в IT-компании.
+                                Профессиональный подход и быстрый результат!"</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Еще 2 отзыва -->
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,22 @@
+@page
+@model RecruitmentAgency.Web.Pages.Authorization.LogoutModel
+@{
+    ViewData["Title"] = "Выход";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h2 class="mb-4">Вы уверены, что хотите выйти?</h2>
+                    <form method="post">
+                        <button type="submit" class="btn btn-danger w-50">
+                            <i class="bi bi-box-arrow-right"></i> Выйти
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

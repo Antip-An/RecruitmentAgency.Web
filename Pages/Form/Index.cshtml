@@ -1,0 +1,156 @@
+@page
+@model RecruitmentAgency.Web.Pages.Form.IndexModel
+@{
+    ViewData["Title"] = "Моя анкета";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">@ViewData["Title"]</h4>
+        </div>
+        <div class="card-body">
+            @if (!Model.HasProfile)
+            {
+                <div class="alert alert-info">
+                    У вас еще нет анкеты. Заполните форму ниже.
+                </div>
+            }
+
+            <form method="post">
+                @if (Model.HasProfile)
+                {
+                    <input type="hidden" asp-for="Profile.Id" />
+                }
+
+                <div class="mb-3">
+                    <label asp-for="Profile.ProfessionalTitle" class="form-label"></label>
+                    <input asp-for="Profile.ProfessionalTitle" class="form-control" />
+                    <span asp-validation-for="Profile.ProfessionalTitle" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Profile.Summary" class="form-label"></label>
+                    <textarea asp-for="Profile.Summary" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Profile.Summary" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Profile.Education" class="form-label"></label>
+                    <textarea asp-for="Profile.Education" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Profile.Education" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Profile.SelectedSkillIds" class="form-label"></label>
+                    <select asp-for="Profile.SelectedSkillIds" asp-items="Model.Skills" class="form-control" multiple>
+                        <option value="">-- Выберите навыки --</option>
+                    </select>
+                    <span asp-validation-for="Profile.SelectedSkillIds" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">
+                        @(Model.HasProfile ? "Обновить" : "Создать")
+                    </button>
+
+                    @if (Model.HasProfile)
+                    {
+                        <button type="submit" asp-page-handler="Delete" class="btn btn-danger"
+                            onclick="return confirm('Удалить анкету?')">
+                            Удалить
+                        </button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Добавляем новую карточку для отображения откликов -->
+    @* @if (Model.HasProfile && Model.Profile.Applications.Any())
+    {
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Мои отклики</h4>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    @foreach (var application in Model.Profile.Applications)
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@application.Vacancy.Title</h5>
+                                <small>@application.AppliedAt.ToString("dd.MM.yyyy")</small>
+                            </div>
+                            <p class="mb-1">Компания: @application.Vacancy.Company.Name</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-@(application.Status == "Approved" ? "success" : 
+                                                                                        application.Status == "Rejected" ? "danger" : "warning")">
+                            @application.Status
+                        </span>
+                        <a href="/Vacancies/Details?id=@application.VacancyId" class="btn btn-sm btn-outline-primary">
+                            Просмотреть вакансию
+                        </a>
+                    </div>
+                </div>
+                                }
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.HasProfile)
+    {
+        <div class="alert alert-info mt-4">
+            У вас пока нет откликов на вакансии.
+        </div>
+    } *@
+    @if (Model.HasProfile && Model.Applications.Any())
+    {
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Мои отклики</h4>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    @foreach (var application in Model.Applications)
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@application.Vacancy.Title</h5>
+                                <small>@application.AppliedAt.ToString("dd.MM.yyyy")</small>
+                            </div>
+                            <p class="mb-1">Компания: @application.Vacancy.Company.Name</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-@(application.Status == "Approved" ? "success" : 
+                                                                                        application.Status == "Rejected" ? "danger" : "warning")">
+                            @application.Status
+                        </span>
+                        <a href="/Vacancies/Details?id=@application.VacancyId" class="btn btn-sm btn-outline-primary">
+                            Просмотреть вакансию
+                        </a>
+                    </div>
+                </div>
+                                }
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.HasProfile)
+    {
+        <div class="alert alert-info mt-4">
+            У вас пока нет откликов на вакансии.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#Profile_SelectedSkillIds').select2({
+                placeholder: "Выберите навыки",
+                allowClear: true
+            });
+        });
+    </script>
+}

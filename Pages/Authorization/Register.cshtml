@@ -1,0 +1,137 @@
+@page
+@model RecruitmentAgency.Web.Pages.Authorization.RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Создать аккаунт</h2>
+                    
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Input!.FirstName" class="form-label"></label>
+                                <input asp-for="Input!.FirstName" class="form-control" />
+                                <span asp-validation-for="Input!.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Input!.LastName" class="form-label"></label>
+                                <input asp-for="Input!.LastName" class="form-control" />
+                                <span asp-validation-for="Input!.LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Input!.Email" class="form-label"></label>
+                            <input asp-for="Input!.Email" class="form-control" />
+                            <span asp-validation-for="Input!.Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Input!.Password" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Input!.Password" class="form-control" 
+                                       type="password" id="passwordInput" autocomplete="new-password" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Input!.Password" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Input!.ConfirmPassword" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Input!.ConfirmPassword" class="form-control" 
+                                       type="password" id="confirmPasswordInput" autocomplete="new-password" />
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Input!.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="showPasswordCheckbox">
+                            <label class="form-check-label" for="showPasswordCheckbox">Показать пароль</label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <p>Уже есть аккаунт? <a asp-page="Login">Войти</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+            
+            // Функция для переключения видимости пароля
+            function togglePasswordVisibility(input, button) {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                
+                // Меняем иконку
+                const icon = button.querySelector('i');
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+            }
+            
+            // Обработчики для кнопок глаза
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    togglePasswordVisibility(passwordInput, this);
+                });
+            }
+            
+            if (toggleConfirmPassword && confirmPasswordInput) {
+                toggleConfirmPassword.addEventListener('click', function() {
+                    togglePasswordVisibility(confirmPasswordInput, this);
+                });
+            }
+            
+            // Обработчик для чекбокса
+            if (showPasswordCheckbox && passwordInput && confirmPasswordInput) {
+                showPasswordCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    passwordInput.setAttribute('type', isChecked ? 'text' : 'password');
+                    confirmPasswordInput.setAttribute('type', isChecked ? 'text' : 'password');
+                    
+                    // Обновляем иконки
+                    const icon1 = togglePassword?.querySelector('i');
+                    const icon2 = toggleConfirmPassword?.querySelector('i');
+                    
+                    if (icon1) {
+                        icon1.classList.toggle('bi-eye', !isChecked);
+                        icon1.classList.toggle('bi-eye-slash', isChecked);
+                    }
+                    if (icon2) {
+                        icon2.classList.toggle('bi-eye', !isChecked);
+                        icon2.classList.toggle('bi-eye-slash', isChecked);
+                    }
+                });
+            }
+        });
+    </script>
+}

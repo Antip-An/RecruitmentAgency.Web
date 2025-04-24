@@ -1,0 +1,72 @@
+@page
+@model RecruitmentAgency.Web.Pages.Admin.Companies.EditModel
+@{
+    ViewData["Title"] = "Редактирование компании";
+}
+
+<div class="container mt-4">
+    <div class="card admin-card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">@ViewData["Title"]</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" id="editForm" class="company-form">
+                <input type="hidden" asp-for="Input.Id" />
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Name" class="form-label"></label>
+                    <input asp-for="Input.Name" class="form-control" />
+                    <span asp-validation-for="Input.Name" class="text-danger"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Description" class="form-label"></label>
+                    <textarea asp-for="Input.Description" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Input.Description" class="text-danger"></span>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.ContactEmail" class="form-label"></label>
+                        <input asp-for="Input.ContactEmail" class="form-control" type="email" />
+                        <span asp-validation-for="Input.ContactEmail" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.Website" class="form-label"></label>
+                        <input asp-for="Input.Website" class="form-control" type="url" />
+                        <span asp-validation-for="Input.Website" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.LogoUrl" class="form-label"></label>
+                    <input asp-for="Input.LogoUrl" class="form-control" type="url" />
+                    <span asp-validation-for="Input.LogoUrl" class="text-danger"></span>
+                    @if (!string.IsNullOrEmpty(Model.Input.LogoUrl))
+                    {
+                        <div class="mt-2">
+                            <img src="@Model.Input.LogoUrl" alt="Текущий логотип" class="company-logo-preview" />
+                        </div>
+                    }
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-page="./Index" class="btn btn-secondary">Отмена</a>
+                    <button type="button" class="btn btn-primary" onclick="confirmSave()">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        function confirmSave() {
+            if (confirm('Вы уверены, что хотите сохранить изменения?')) {
+                document.getElementById('editForm').submit();
+            }
+        }
+    </script>
+}

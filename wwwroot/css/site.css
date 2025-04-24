@@ -1,0 +1,489 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* -- */
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.active {
+  color: #0d6efd !important;
+}
+
+/* -- */
+
+/* Основные стили главной страницы */
+.hero-banner {
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+  border-radius: 0 0 20px 20px;
+}
+
+.divider {
+  width: 80px;
+  height: 4px;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.vacancy-card {
+  transition: transform 0.3s ease;
+}
+
+.vacancy-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .hero-banner {
+      text-align: center;
+      padding: 3rem 0;
+  }
+  
+  .hero-banner .btn {
+      width: 100%;
+      margin-bottom: 10px;
+  }
+}
+
+/* -- */
+
+.vacancy-card {
+  transition: transform 0.2s;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.vacancy-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.company-logo {
+  max-height: 200px;
+  object-fit: contain;
+}
+
+/* -- */
+.company-card {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.company-card .card-body {
+  padding: 1.5rem;
+}
+
+.company-card img {
+  border: 1px solid #eee;
+}
+
+/* --- */
+
+/* Формы авторизации */
+.auth-card {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.auth-card .card-body {
+  padding: 2rem;
+}
+
+.auth-card .form-control {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.auth-card .btn {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+/* Адаптивность */
+@media (max-width: 576px) {
+  .auth-card .card-body {
+      padding: 1.5rem;
+  }
+}
+
+/* -- */
+
+/* Стили для кнопки выхода */
+.nav-link.btn-link.text-dark {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nav-link.btn-link.text-dark:hover {
+  color: #0d6efd !important;
+}
+
+/* Стили для модального окна выхода */
+#logoutModal .modal-footer form {
+  display: inline-block;
+  margin: 0;
+}
+
+#logoutModal .btn-danger {
+  padding: 0.375rem 1.5rem;
+}
+
+/* -- */
+
+/* Стили для поля с паролем */
+.input-group .btn-outline-secondary {
+  border-left: none;
+  border-color: #ced4da;
+}
+
+.input-group .btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+}
+
+.input-group .form-control:focus + .btn-outline-secondary {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Чекбокс показать пароль */
+.form-check {
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-check-input {
+  margin-top: 0.25rem;
+}
+
+/* --- */
+/* Стили профиля */
+.profile-card {
+  transition: transform 0.2s;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.avatar-lg {
+  font-size: 3rem;
+  color: #6c757d;
+}
+
+/* -- */
+/* Стили для админ-таблиц */
+.admin-table th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.action-buttons .btn {
+  padding: 0.25rem 0.5rem;
+}
+
+/* Добавляем в конец файла */
+
+/* ========== СТИЛИ ДЛЯ УПРАВЛЕНИЯ КОМПАНИЯМИ ========== */
+.company-logo-sm {
+  height: 24px;
+  width: auto;
+  max-width: 80px;
+  object-fit: contain;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+
+.company-logo-md {
+  height: 40px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.company-website-link {
+  color: #0d6efd;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.company-website-link:hover {
+  text-decoration: underline;
+}
+
+/* Стили для таблицы компаний */
+.table-companies {
+  --bs-table-bg: transparent;
+}
+
+.table-companies th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  font-weight: 600;
+  color: #495057;
+}
+
+.table-companies td {
+  vertical-align: middle;
+  padding: 12px 8px;
+}
+
+.table-companies tr:hover {
+  background-color: rgba(13, 110, 253, 0.03);
+}
+
+/* Стили для форм компаний */
+.company-form .form-label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.company-form .form-control,
+.company-form .form-select {
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.company-form textarea.form-control {
+  min-height: 120px;
+}
+
+.company-logo-preview {
+  max-height: 100px;
+  width: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 4px;
+  margin-top: 8px;
+}
+
+/* ========== СТИЛИ ДЛЯ ВАКАНСИЙ ========== */
+.vacancy-status-badge {
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vacancy-status-badge .bi {
+  font-size: 0.9em;
+}
+
+.badge-status-draft {
+  background-color: #fff3cd;
+  color: #664d03;
+}
+
+.badge-status-published {
+  background-color: #d1e7dd;
+  color: #0a3622;
+}
+
+.badge-status-archived {
+  background-color: #e2e3e5;
+  color: #2b2f32;
+}
+
+/* Стили для таблицы вакансий */
+.table-vacancies th {
+  white-space: nowrap;
+}
+
+.salary-range {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* ========== ОБЩИЕ СТИЛИ ДЛЯ АДМИН-ПАНЕЛИ ========== */
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: none;
+}
+
+.admin-card .card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  font-weight: 600;
+  padding: 16px 20px;
+}
+
+.admin-card .card-body {
+  padding: 20px;
+}
+
+/* Кнопки действий */
+.action-buttons .btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .table-responsive-md {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+  }
+  
+  .admin-page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+  }
+  
+  .company-logo-sm {
+      height: 20px;
+      margin-right: 6px;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ========== СТИЛИ ДЛЯ КНОПОК ДЕЙСТВИЙ В ТАБЛИЦЕ ========== */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.action-buttons .btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+  .action-buttons {
+      justify-content: flex-start;
+  }
+  
+  .action-buttons .btn {
+      width: 32px;
+      height: 32px;
+  }
+}
+
+/* Выравнивание содержимого ячеек таблицы */
+.table-companies td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Для заголовка столбца действий */
+.table-companies th:last-child {
+  text-align: right;
+}

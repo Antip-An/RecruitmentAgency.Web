@@ -1,0 +1,95 @@
+@page
+@model RecruitmentAgency.Web.Pages.Vacancies.EditModel
+@{
+    ViewData["Title"] = "Редактирование вакансии";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">@ViewData["Title"]</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" id="editForm">
+                <input type="hidden" asp-for="Input.Id" />
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Title" class="form-label"></label>
+                    <input asp-for="Input.Title" class="form-control" />
+                    <span asp-validation-for="Input.Title" class="text-danger"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Description" class="form-label"></label>
+                    <textarea asp-for="Input.Description" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Input.Description" class="text-danger"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Requirements" class="form-label"></label>
+                    <textarea asp-for="Input.Requirements" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Input.Requirements" class="text-danger"></span>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.SalaryFrom" class="form-label"></label>
+                        <input asp-for="Input.SalaryFrom" class="form-control" type="number" min="0" step="1000" />
+                        <span asp-validation-for="Input.SalaryFrom" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.SalaryTo" class="form-label"></label>
+                        <input asp-for="Input.SalaryTo" class="form-control" type="number" min="0" step="1000" />
+                        <span asp-validation-for="Input.SalaryTo" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.Location" class="form-label"></label>
+                        <input asp-for="Input.Location" class="form-control" />
+                        <span asp-validation-for="Input.Location" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.CompanyId" class="form-label"></label>
+                        <select asp-for="Input.CompanyId" asp-items="Model.Companies" class="form-select">
+                            <option value="">-- Выберите компанию --</option>
+                        </select>
+                        <span asp-validation-for="Input.CompanyId" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input asp-for="Input.IsRemote" class="form-check-input" type="checkbox" />
+                            <label asp-for="Input.IsRemote" class="form-check-label"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.Status" class="form-label"></label>
+                        <select asp-for="Input.Status" asp-items="Model.Statuses" class="form-select"></select>
+                        <span asp-validation-for="Input.Status" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-page="./Details" asp-route-id="@Model.Input.Id" class="btn btn-secondary">Отмена</a>
+                    <button type="button" class="btn btn-primary" onclick="confirmSave()">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        function confirmSave() {
+            if (confirm('Вы уверены, что хотите сохранить изменения?')) {
+                document.getElementById('editForm').submit();
+            }
+        }
+    </script>
+}
