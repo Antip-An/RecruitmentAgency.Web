@@ -70,6 +70,9 @@ dotnet run
 # Удалить последнюю миграцию
 dotnet ef migrations remove
 
+# Удалить папку с файлами миграции (при необходимости)
+rm -r Migrations
+
 # Создать заново
 dotnet ef migrations add Initial
 dotnet ef database update
